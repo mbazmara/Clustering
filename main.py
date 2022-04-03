@@ -7,6 +7,7 @@ st.set_page_config(page_title='Clustering your data', page_icon=':chart_with_upw
 st.title("Clustering any DataSet you want")
 st.markdown('Created by **Mohammad Bazmara**')
 
+
 # ---- Functions ----
 def categorize(data):
     for f_type in data.columns:
@@ -29,34 +30,45 @@ def visualize(data, n_clusters,x,y):
     plt.title('Clustered Database that you uploaded')
     plt.xlabel(x)
     plt.ylabel(y)
+    st.set_option('deprecation.showPyplotGlobalUse', False)
     st.pyplot()
 
 
-def del_useless_features(data, number_of_instances):
-    for f_type in data.columns:
-        if data[f_type].nunique() == number_of_instances:
-            data = data.drop(columns=[f_type])
-            print('Kbooom')
-    return data
-
-
 # ---- Input Data ----
-x = st.sidebar.file_uploader("Pick a file", type=['csv', 'xlsx'])
-st.sidebar.write('[Download Sample>](https://www.kaggle.com/datasets/uciml/iris/download)')
-if x is not None:
-    data = pd.read_csv(x)
+radio_btn = ['Upload your Dataset', 'Mall Customers Dataset']
+input_data = st.sidebar.radio('Select one way for clustering',radio_btn)
+if input_data == 'Upload your Dataset':
+    x = st.sidebar.file_uploader("Pick a file", type=['csv', 'xlsx'])
+    st.sidebar.write('[Download Sample>](https://www.kaggle.com/datasets/uciml/iris/download)')
+    if x is not None:
+        data = pd.read_csv(x)
+        number_of_instances = data.shape[1]
+        input_data = data
+        numeric_features = list(input_data.select_dtypes(['int', 'float']).columns)
+        categorize(input_data)
+        # ---- SlideBar ----
+        number_of_clusters = st.sidebar.slider(label='Number of clusters', min_value=2, max_value=8)
+        f1 = st.sidebar.selectbox(label='X Numeric Feature:', options=numeric_features)
+        f2 = st.sidebar.selectbox(label='Y Numeric Feature:', options=numeric_features)
+        st.write('---')
+        with st.container():
+            left, right = st.columns(2)
+            with left:
+                st.subheader("first 5 insctances of your dataset")
+                st.write(data.head(5))
+            with right:
+                visualize(input_data, number_of_clusters, f1, f2)
+        st.write('---')
+if input_data == 'Mall Customers Dataset':
+    data = pd.read_csv('Mall_Customers.csv')
     number_of_instances = data.shape[1]
     input_data = data
-    #input_data = del_useless_features(data, number_of_instances)
     numeric_features = list(input_data.select_dtypes(['int', 'float']).columns)
     categorize(input_data)
-
     # ---- SlideBar ----
-    #st.sidebar.subheader('Give us your data to cluster')
     number_of_clusters = st.sidebar.slider(label='Number of clusters', min_value=2, max_value=8)
     f1 = st.sidebar.selectbox(label='X Numeric Feature:', options=numeric_features)
     f2 = st.sidebar.selectbox(label='Y Numeric Feature:', options=numeric_features)
-
     st.write('---')
     with st.container():
         left, right = st.columns(2)
