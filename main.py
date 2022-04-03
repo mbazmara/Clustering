@@ -33,38 +33,19 @@ def visualize(data, n_clusters,x,y):
     st.set_option('deprecation.showPyplotGlobalUse', False)
     st.pyplot()
 
-try:
-    # ---- Input Data ----
-    left , right = st.columns((3,1))
-    with left:
-        radio_btn = ['Upload your Dataset', 'Mall Customers Dataset']
-        input_data = st.radio('Select one way for clustering',radio_btn)
-    with right:
-        st.image('images/mmb2.jpeg', )
-    if input_data == 'Upload your Dataset':
-        x = st.file_uploader("Pick a file", type=['csv', 'xlsx'])
-        st.write('[Download Sample>](https://www.kaggle.com/datasets/uciml/iris/download)')
-        if x is not None:
-            data = pd.read_csv(x)
-            number_of_instances = data.shape[1]
-            input_data = data
-            numeric_features = list(input_data.select_dtypes(['int', 'float']).columns)
-            categorize(input_data)
-            # ---- SlideBar ----
-            st.subheader("first 5 insctances of your dataset")
-            st.write(data.head(5))
-            left, middle, right = st.columns(3)
-            with left:
-                number_of_clusters = st.slider(label='Number of clusters', min_value=2, max_value=8)
-            with middle:
-                f1 = st.selectbox(label='X Numeric Feature:', options=numeric_features)
-            with right:
-                f2 = st.selectbox(label='Y Numeric Feature:', options=numeric_features)
-            st.write('---')
-            visualize(input_data, number_of_clusters, f1, f2)
-            st.write('---')
-    if input_data == 'Mall Customers Dataset':
-        data = pd.read_csv('Mall_Customers.csv')
+
+# ---- Input Data ----
+left , right = st.columns((3,1))
+with left:
+    radio_btn = ['Upload your Dataset', 'Mall Customers Dataset']
+    input_data = st.radio('Select one way for clustering',radio_btn)
+with right:
+    st.image('images/mmb2.jpeg', )
+if input_data == 'Upload your Dataset':
+    x = st.file_uploader("Pick a file", type=['csv', 'xlsx'])
+    st.write('[Download Sample>](https://www.kaggle.com/datasets/uciml/iris/download)')
+    if x is not None:
+        data = pd.read_csv(x)
         number_of_instances = data.shape[1]
         input_data = data
         numeric_features = list(input_data.select_dtypes(['int', 'float']).columns)
@@ -82,5 +63,22 @@ try:
         st.write('---')
         visualize(input_data, number_of_clusters, f1, f2)
         st.write('---')
-except ValueError as v:
-    st.write(v)
+if input_data == 'Mall Customers Dataset':
+    data = pd.read_csv('Mall_Customers.csv')
+    number_of_instances = data.shape[1]
+    input_data = data
+    numeric_features = list(input_data.select_dtypes(['int', 'float']).columns)
+    categorize(input_data)
+    # ---- SlideBar ----
+    st.subheader("first 5 insctances of your dataset")
+    st.write(data.head(5))
+    left, middle, right = st.columns(3)
+    with left:
+        number_of_clusters = st.slider(label='Number of clusters', min_value=2, max_value=8)
+    with middle:
+        f1 = st.selectbox(label='X Numeric Feature:', options=numeric_features)
+    with right:
+        f2 = st.selectbox(label='Y Numeric Feature:', options=numeric_features)
+    st.write('---')
+    visualize(input_data, number_of_clusters, f1, f2)
+    st.write('---')
